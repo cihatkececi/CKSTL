@@ -14,6 +14,9 @@ add_executable(tests
 target_link_libraries(tests PRIVATE ckstl)
 
 include(CTest)
-include(Catch)
-catch_discover_tests(tests)
+#include(Catch)
+#catch_discover_tests(tests)
+
+include(ParseAndAddCatchTests)
+ParseAndAddCatchTests(tests)
 

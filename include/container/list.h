@@ -93,11 +93,11 @@ public:
         }
     }
 
-    List(const List& rhs) {
+    List(const List& rhs) : List{} {
         for (auto it = rhs.begin(); it != rhs.end(); it++) {
             emplace_back(*it);
         }
-        _size = rhs._size;
+//        _size = rhs._size;
     }
 
     List(List&& rhs) : _end{std::move(rhs._end)}, _size{rhs._size} {
@@ -142,7 +142,7 @@ public:
 
     T& front() {
         if (_size) {
-            return _end.prev->value;
+            return _end.next->value;
         }
         else {
             throw "List is empty.";
@@ -151,7 +151,7 @@ public:
 
     const T& front() const {
         if (_size) {
-            return _end.prev->value;
+            return _end.next->value;
         }
         else {
             throw "List is empty.";
@@ -239,6 +239,7 @@ private:
         new_node->next = pos;
         new_node->prev = pos->prev;
         pos->prev = new_node;
+        new_node->prev->next = new_node;
     }
 
     template<typename... Args>
@@ -246,9 +247,9 @@ private:
         ListNode<T>* new_node = NodeAllocator::allocate(1);
         NodeAllocator::construct(new_node, std::forward<Args>(args)...);
         _link_node(new_node, pos);
-        if (_size == 0) {
-            _link_node(pos, new_node);
-        }
+//        if (_size == 0) {
+//            _link_node(pos, new_node);
+//        }
         _size++;
     }
 

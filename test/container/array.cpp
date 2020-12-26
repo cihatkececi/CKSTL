@@ -5,7 +5,7 @@
 
 using namespace ck;
 
-TEST_CASE("Array default construction") {
+TEST_CASE("Array default construction", "[array]") {
     Array<int, 0> array;
 
     REQUIRE(array.size() == 0);

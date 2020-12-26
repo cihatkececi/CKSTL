@@ -2,17 +2,6 @@ language: cpp
 
 jobs:
   include:
-    - os: osx
-      compiler: gcc
-      osx_image: xcode11.2    # includes gcc-9 by default
-      env:
-        - GCC_VER="9"
-        - MATRIX_EVAL="CC=gcc-${GCC_VER} && CXX=g++-${GCC_VER}"
-
-    - os: osx
-      compiler: clang
-      osx_image: xcode11.2
-
     - os: linux
       dist: bionic
       compiler: gcc
@@ -26,18 +15,27 @@ jobs:
             - gcc-9
             - g++-9
             - doxygen
-            - python3-pip
       after_script:
         - bash <(curl -s https://codecov.io/bash) -x /usr/bin/gcov-${GCC_VER}
 
-    - os: linux
-      dist: bionic
-      compiler: clang
-      addons:
-        apt:
-          packages:
-            - doxygen
-            - python3-pip
+#    - os: linux
+#      dist: bionic
+#      compiler: clang
+#      addons:
+#        apt:
+#          packages:
+#            - doxygen
+#
+#    - os: osx
+#      compiler: gcc
+#      osx_image: xcode11.2    # includes gcc-9 by default
+#      env:
+#        - GCC_VER="9"
+#        - MATRIX_EVAL="CC=gcc-${GCC_VER} && CXX=g++-${GCC_VER}"
+#
+#    - os: osx
+#      compiler: clang
+#      osx_image: xcode11.2
 
 script:
   - mkdir build

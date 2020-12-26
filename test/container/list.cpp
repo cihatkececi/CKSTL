@@ -5,7 +5,7 @@
 
 using namespace ck;
 
-TEST_CASE("List default construction") {
+TEST_CASE("List default construction", "[list]") {
     List<int> list;
 
     REQUIRE(list.size() == 0);
@@ -14,7 +14,7 @@ TEST_CASE("List default construction") {
     REQUIRE(list.begin() == list.end());
 }
 
-TEST_CASE("List push back") {
+TEST_CASE("List push back", "[list]") {
     List<int> list;
     list.push_back(1);
     REQUIRE(list.size() == 1);
@@ -28,7 +28,7 @@ TEST_CASE("List push back") {
     REQUIRE(list.back() == 2);
 }
 
-TEST_CASE("List push front") {
+TEST_CASE("List push front", "[list]") {
     List<int> list;
     list.push_front(2);
     REQUIRE(list.size() == 1);
@@ -40,7 +40,7 @@ TEST_CASE("List push front") {
     REQUIRE(list.back() == 2);
 }
 
-TEST_CASE("List copy construction") {
+TEST_CASE("List copy construction", "[list]") {
     List<int> list;
     list.push_back(1);
 
@@ -51,7 +51,7 @@ TEST_CASE("List copy construction") {
     REQUIRE(list2.back() == 1);
 }
 
-TEST_CASE("List move construction") {
+TEST_CASE("List move construction", "[list]") {
     List<int> list;
     list.push_back(1);
 
