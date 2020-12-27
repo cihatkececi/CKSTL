@@ -20,7 +20,7 @@ public:
         }
     }
 
-    Vector(const Vector& rhs) : _data{allocate<T>(rhs._capacity)}, _size{rhs._size}, _capacity{rhs._capacity}  {
+    Vector(const Vector& rhs) : _data{Allocator::allocate(rhs._capacity)}, _size{rhs._size}, _capacity{rhs._capacity}  {
         std::copy(rhs._data, rhs._data+_size, _data);
     }
 

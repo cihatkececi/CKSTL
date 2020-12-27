@@ -53,7 +53,11 @@ public:
         return _node == rhs._node;
     }
 
-private:
+    bool operator!=(const ListIterator& rhs) const {
+        return _node != rhs._node;
+    }
+
+protected:
     ListNode<T>* _node;
 };
 
@@ -63,14 +67,15 @@ class ConstListIterator : public ListIterator<T> {
 public:
     using ListIterator<T>::ListIterator;
 
-    explicit ConstListIterator(const ListNode<T>* node) : ListIterator<T>::ListIterator{const_cast<ListNode<T>*>(node)} {}
+    explicit ConstListIterator(const ListNode<T>* node) : ListIterator<T>::ListIterator{
+            const_cast<ListNode<T>*>(node)} {}
 
     const T& operator*() const {
-        return _node->value;
+        return this->_node->value;
     }
 
     const T* operator->() const {
-        return &_node->value;
+        return &this->_node->value;
     }
 };
 
@@ -82,7 +87,7 @@ public:
     using ConstIterator = ConstListIterator<T>;
     using NodeAllocator = typename Allocator::template rebind<ListNode<T>>::type;
 
-    List() : _end{}, _size{0} {
+    List() {
         _end.next = &_end;
         _end.prev = &_end;
     }
@@ -100,9 +105,11 @@ public:
 //        _size = rhs._size;
     }
 
-    List(List&& rhs) : _end{std::move(rhs._end)}, _size{rhs._size} {
-//        rhs._end.next = nullptr;
-//        rhs._end.prev = nullptr;
+    List(List&& rhs) noexcept : _end{std::move(rhs._end)}, _size{rhs._size} {
+        _end.next->prev = &_end;
+        _end.prev->next = &_end;
+        rhs._end.next = &rhs._end;
+        rhs._end.prev = &rhs._end;
         rhs._size = 0;
     }
 
@@ -119,43 +126,45 @@ public:
     }
 
     ~List() {
-        // TODO: Implement.
+        auto node = _end.next;
+        while (node != &_end) {
+            auto next_node = node->next;
+            NodeAllocator::destroy(node);
+            NodeAllocator::deallocate(node);
+            node = next_node;
+        }
     }
 
     T& back() {
-        if (_size) {
+        if (_size > 0) {
             return _end.prev->value;
         }
-        else {
-            throw "List is empty.";
-        }
+        throw "List is empty.";
+
     }
 
     const T& back() const {
-        if (_size) {
+        if (_size > 0) {
             return _end.prev->value;
         }
-        else {
-            throw "List is empty.";
-        }
+        throw "List is empty.";
+
     }
 
     T& front() {
-        if (_size) {
+        if (_size > 0) {
             return _end.next->value;
         }
-        else {
-            throw "List is empty.";
-        }
+        throw "List is empty.";
+
     }
 
     const T& front() const {
         if (_size) {
             return _end.next->value;
         }
-        else {
-            throw "List is empty.";
-        }
+        throw "List is empty.";
+
     }
 
     void push_back(const T& value) {
@@ -169,12 +178,12 @@ public:
     }
 
     template<typename... Args>
-    void emplace_back(Args&&... args) {
+    void emplace_back(Args&& ... args) {
         _emplace(&_end, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
-    void emplace_front(Args&&... args) {
+    void emplace_front(Args&& ... args) {
         _emplace(_end.next, std::forward<Args>(args)...);
     }
 
@@ -190,18 +199,18 @@ public:
         }
     }
 
-    size_t size() const {
+    [[nodiscard]] size_t size() const {
         return _size;
     }
 
     void remove(const T& value) {
-        remove_if([&](const T& rhs){ return rhs == value; });
+        remove_if([&](const T& rhs) { return rhs == value; });
     }
 
     template<typename Cond>
     void remove_if(Cond cond) {
         for (auto node = _end.next; node != _end;) {
-            ListNode <T>* next = node->next;
+            ListNode<T>* next = node->next;
 
             if (cond(node->value)) {
                 _remove_node(node);
@@ -232,8 +241,8 @@ public:
     }
 
 private:
-    ListNode<T> _end;
-    size_t _size;
+    ListNode<T> _end{};
+    size_t _size{0};
 
     void _link_node(ListNode<T>* new_node, ListNode<T>* pos) {
         new_node->next = pos;
@@ -243,7 +252,7 @@ private:
     }
 
     template<typename... Args>
-    void _emplace(ListNode<T>* pos, Args&&... args) {
+    void _emplace(ListNode<T>* pos, Args&& ... args) {
         ListNode<T>* new_node = NodeAllocator::allocate(1);
         NodeAllocator::construct(new_node, std::forward<Args>(args)...);
         _link_node(new_node, pos);

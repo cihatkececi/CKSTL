@@ -40,6 +40,7 @@ add_library(ckstl INTERFACE)
 option(ENABLE_TESTING "Enable Testing" TRUE)
 
 if (ENABLE_TESTING)
+    enable_testing()
     add_subdirectory(test)
 endif ()
 
