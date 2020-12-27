@@ -12,12 +12,12 @@ else()
 endif()
 
 
-if (CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES ".*Clang")
     option(ENABLE_COVERAGE "Enable Coverage Reporting" FALSE)
 
     if (ENABLE_COVERAGE)
         add_definitions(--coverage -O0)
-        set(LINKER_FLAGS "${LINKER_FLAGS} --coverage")
+        set(LINKER_FLAGS "${LINKER_FLAGS} -lgcov --coverage")
     endif ()
 endif ()
 

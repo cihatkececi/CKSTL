@@ -11,6 +11,8 @@ add_executable(tests
         )
 
 target_link_libraries(tests PRIVATE ckstl)
+target_compile_options(tests PRIVATE --coverage -O0)
+target_link_options(tests PRIVATE -lgcov --coverage)
 
 include(CTest)
 #include(Catch)
