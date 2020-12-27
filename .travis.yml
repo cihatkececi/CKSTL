@@ -40,6 +40,6 @@ jobs:
 script:
   - mkdir build
   - cd build
-  - cmake ../
+  - cmake -D ENABLE_COVERAGE:BOOL=TRUE ../
   - cmake --build . -- -j2
   - ctest -j2
