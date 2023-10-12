@@ -1,5 +1,7 @@
 ---
-Checks:          '*,-fuchsia-*,-google-*,-zircon-*,-abseil-*,-modernize-use-trailing-return-type,-llvm-*'
+Checks:           '*,-fuchsia-*,-google-*,-zircon-*,-abseil-*,-altera-*,-modernize-use-trailing-return-type,-llvm-*,-llvmlibc-*'
+#Checks: '*,-modernize-use-trailing-return-type,-cppcoreguidelines-owning-memory,-fuchsia-overloaded-operator,
+#-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-avoid-c-arrays,-google-readability-namespace-comments'
 WarningsAsErrors: '*'
 HeaderFilterRegex: ''
-FormatStyle:     none
+FormatStyle: none

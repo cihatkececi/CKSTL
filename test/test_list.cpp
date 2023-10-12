@@ -1,11 +1,11 @@
-#include "../catch.hpp"
+#include "catch.hpp"
 
-#include "container/list.h"
+#include "ckstl/list.h"
 
 
 using namespace ck;
 
-TEST_CASE("List default construction", "[list]") {
+TEST_CASE("List default construction", "[List]") {
     List<int> list;
 
     REQUIRE(list.size() == 0);
@@ -14,7 +14,7 @@ TEST_CASE("List default construction", "[list]") {
     REQUIRE(list.begin() == list.end());
 }
 
-TEST_CASE("List push back", "[list]") {
+TEST_CASE("List push back", "[List]") {
     List<int> list;
     list.push_back(1);
     REQUIRE(list.size() == 1);
@@ -28,7 +28,7 @@ TEST_CASE("List push back", "[list]") {
     REQUIRE(list.back() == 2);
 }
 
-TEST_CASE("List push front", "[list]") {
+TEST_CASE("List push front", "[List]") {
     List<int> list;
     list.push_front(2);
     REQUIRE(list.size() == 1);
@@ -40,7 +40,7 @@ TEST_CASE("List push front", "[list]") {
     REQUIRE(list.back() == 2);
 }
 
-TEST_CASE("List copy construction", "[list]") {
+TEST_CASE("List copy construction", "[List]") {
     List<int> list;
     list.push_back(1);
 
@@ -51,7 +51,7 @@ TEST_CASE("List copy construction", "[list]") {
     REQUIRE(list2.back() == 1);
 }
 
-TEST_CASE("List move construction", "[list]") {
+TEST_CASE("List move construction", "[List]") {
     List<int> list;
     list.push_back(1);
 

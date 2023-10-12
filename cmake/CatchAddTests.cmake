@@ -10,13 +10,25 @@ set(reporter ${TEST_REPORTER})
 set(output_dir ${TEST_OUTPUT_DIR})
 set(output_prefix ${TEST_OUTPUT_PREFIX})
 set(output_suffix ${TEST_OUTPUT_SUFFIX})
+set(dl_paths ${TEST_DL_PATHS})
 set(script)
 set(suite)
 set(tests)
 
+if(WIN32)
+  set(dl_paths_variable_name PATH)
+elseif(APPLE)
+  set(dl_paths_variable_name DYLD_LIBRARY_PATH)
+else()
+  set(dl_paths_variable_name LD_LIBRARY_PATH)
+endif()
+
 function(add_command NAME)
   set(_args "")
-  foreach(_arg ${ARGN})
+  # use ARGV* instead of ARGN, because ARGN splits arrays into multiple arguments
+  math(EXPR _last_arg ${ARGC}-1)
+  foreach(_n RANGE 1 ${_last_arg})
+    set(_arg "${ARGV${_n}}")
     if(_arg MATCHES "[^-./:a-zA-Z0-9_]")
       set(_args "${_args} [==[${_arg}]==]") # form a bracket_argument
     else()
@@ -32,6 +44,12 @@ if(NOT EXISTS "${TEST_EXECUTABLE}")
     "Specified test executable '${TEST_EXECUTABLE}' does not exist"
   )
 endif()
+
+if(dl_paths)
+  cmake_path(CONVERT "${dl_paths}" TO_NATIVE_PATH_LIST paths)
+  set(ENV{${dl_paths_variable_name}} "${paths}")
+endif()
+
 execute_process(
   COMMAND ${TEST_EXECUTOR} "${TEST_EXECUTABLE}" ${spec} --list-tests --verbosity quiet
   OUTPUT_VARIABLE output
@@ -82,6 +100,13 @@ if(output_dir AND NOT IS_ABSOLUTE ${output_dir})
   endif()
 endif()
 
+if(dl_paths)
+  foreach(path ${dl_paths})
+    cmake_path(NATIVE_PATH path native_path)
+    list(APPEND environment_modifications "${dl_paths_variable_name}=path_list_prepend:${native_path}")
+  endforeach()
+endif()
+
 # Parse output
 foreach(line ${output})
   set(test ${line})
@@ -112,6 +137,14 @@ foreach(line ${output})
     WORKING_DIRECTORY "${TEST_WORKING_DIR}"
     ${properties}
   )
+
+   if(environment_modifications)
+     add_command(set_tests_properties
+       "${prefix}${test}${suffix}"
+       PROPERTIES
+       ENVIRONMENT_MODIFICATION "${environment_modifications}")
+   endif()
+
   list(APPEND tests "${prefix}${test}${suffix}")
 endforeach()
 
